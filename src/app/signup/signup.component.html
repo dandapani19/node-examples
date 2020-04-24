@@ -1,0 +1,15 @@
+<div class="auth-wrapper">
+    <form class="form-signin" #signupForm="ngForm" name="signupForm">
+        <h3 class="h3 mb-3 font-weight-normal text-center">Please sign in</h3>
+       
+            <label>Email</label>
+            <input type="email"  [(ngModel)]="SignupData.mail"  name="email" #email="ngModel" placeholder="Enter email" required>
+       
+        
+            <label>Password</label>
+            <input type="password"  [(ngModel)]="SignupData.password"  name="password" #password="ngModel" placeholder="Password"><br><br>
+       
+        <button  class="btn btn-block btn-primary" (click)='signup(signupForm)'>Sign in</button><br><br>
+        <button  class="btn btn-block btn-primary" routerLink="/">Back</button>
+    </form>
+</div>

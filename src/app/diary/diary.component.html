@@ -1,0 +1,16 @@
+
+<div class="auth-wrapper">
+    <form class="form-signin" #diaryForm="ngForm" name="diaryForm">
+        <h3 class="h3 mb-3 font-weight-normal text-center">Diary page</h3>
+       
+            <label>Diary</label>
+            <input type="text"  [(ngModel)]="DiaryData.diary"  name="diary" #diary="ngModel" placeholder="Enter diary" required>
+       
+        
+            <label>Notes</label>
+            <input type="text"  [(ngModel)]="DiaryData.notes"  name="notes" #notes="ngModel" placeholder="notes......"><br>
+       
+        <button  class="btn btn-block btn-primary" (click)='diarySave()'>Save</button><br>
+        <button  class="btn btn-block btn-primary" routerLink="/dashboard">Back</button>
+    </form>
+</div>

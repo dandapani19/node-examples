@@ -1,0 +1,15 @@
+<div class="auth-wrapper">
+    <form class="form-signin" #diaryForm="ngForm" name="diaryForm">
+        <h3 class="h3 mb-3 font-weight-normal text-center">Order page</h3>
+       
+            <label>Order Name</label>
+            <input type="text"  [(ngModel)]="OrderData.name"  name="name" #name="ngModel" placeholder="Enter name" required>
+       
+        
+            <label>salary</label>
+            <input type="text"  [(ngModel)]="OrderData.salary"  name="salary" #salary="ngModel" placeholder="salary......"><br>
+       
+        <button  class="btn btn-block btn-primary" (click)='order(diaryForm)'>Save</button><br>
+        <button  class="btn btn-block btn-primary" routerLink="/dashboard">Back</button>
+    </form>
+</div>
