@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
+const db = require('../../config/database');
 const multer = require('multer');
 const checkAuth =require('../middleware/check-auth');
 
@@ -15,31 +15,29 @@ const storage =multer.diskStorage({
  
 const upload = multer({storage: storage});
 
-const Record = require('../models/record');
+const Record = require('../../models/order');
 // Get user information
-router.get('/',checkAuth,(req, res, next) =>{
-  Record.find()
-  .exec()
+router.get('/',(req, res) =>{
+  console.log('----------get record')
+  Record.findAll()
   .then(doc =>{
     console.log('------>dec---->',doc);
     res.status(200).json({
       message: 'Handling GET request to /user',
-      data:doc
     });
   })
   .catch(err =>{ res.status(404).json(err)})
    
 });
 // Add user information
-router.post('/',checkAuth, upload.single('productImage'), (req, res, next) =>{
-console.log(req.file);
-    const record = new Record({
-      _id: new mongoose.Types.ObjectId(),
-      name:req.body.name,
+router.post('/',checkAuth,upload.single('productImage'), (req, res, next) =>{
+console.log(req.body);
+
+    Record.create({
+      Name:req.body.Name,
       salary:req.body.salary
     });
     record
-    .save()
     .then(data =>{
            console.log('---------->data------>',data);
            res.status(200).json({
@@ -52,10 +50,9 @@ console.log(req.file);
 });
 
 //Get perticular user information
-router.get('/:recordid',checkAuth,(req, res) =>{
+router.get('/:recordid',checkAuth,(req, res ,next) =>{
     const id= req.params.userid;
     Record.findById(id)
-    .exec()
     .then( doc =>{
          console.log('-------->get user data---->',doc);
          if(doc) res.status(200).json(doc);
@@ -68,11 +65,10 @@ router.get('/:recordid',checkAuth,(req, res) =>{
 });
 
 // Update user inforamtion
-router.patch('/:recordid',checkAuth,(req, res) =>{
+router.patch('/:recordid',checkAuth,(req, res ,next) =>{
   const id= req.params.userid;
  
-Record.update({_id :id },{ $set: {name: req.body.name , salary:req.body.salary} })
-.exec()
+Record.update({id :id },{ $set: {Name: req.body.Name , salary:req.body.salary} })
 .then(data =>{
 res.status(200).json(data)
 })
@@ -86,8 +82,7 @@ res.status(200).json(data)
 router.delete('/:recordid',checkAuth,(req, res) =>{
   const id= req.params.userid;
  
-  Record.destroy({_id :id })
-  .exec()
+  Record.destroy({id :id })
   .then(data =>{
   res.status(200).json(data)
   })

@@ -1,7 +1,13 @@
 {
     
     "env":{
-        "MONGO_ATLUS_PW" : "node-shop",
-        "JWT_KEY":"secret"
+        "POSTGRES_DB":"Test",
+        "DB_USER" : "postgres",
+        "DB_PASSWORD":"postgres",
+        "DB_HOST":"localhost",
+        "DB_PORT":"5432",
+        "JWT_KEY":"secret",
+        "SSL": "true",
+        "DB_SSL":"false"
     }
 }

@@ -2,28 +2,40 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser')
-const mongoose = require('mongoose');
+const Sequlize =require('sequelize')
+const path = require('path');
 
 const recordRoutes = require('./api/router/record');
 const diaryRoutes = require('./api/router/diary');
 const userRoutes = require('./api/router/user');
 
-mongoose.connect('mongodb+srv://node-shop:'+ process.env.MONGO_ATLUS_PW +'@node-shope-grm7a.mongodb.net/test?retryWrites=true&w=majority');
+//Database
+const db = require ('./config/database');
+//Test DB
+try {
+    db.authenticate();
+    console.log('Connection has been established successfully.');
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+
+
 app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
  
-// app.use((req, res) =>{
-//  res.header('Access-Control','*');
-//  res.header(
-//      "Access-Control",
-//      "Origin, X-Requested-With, Conten-Type, Accept, Authorization"
-//  );
-//  if(req.method === 'OPTIONS'){
-//      req.header('Access-Control','PUT','POST','PATCH','DELETE','GET');
-//      return res.status(200).json({});
-//  }
-// });
+app.use((req, res, next) =>{
+ res.header('Access-Control-Allow-Origin','*');
+ res.header(
+     "Access-Control-Allow-Headers",
+     "Origin, X-Requested-With, Conten-Type, Accept, Authorization"
+ );
+ if(req.method === 'OPTIONS'){
+     req.header('Access-Control-Allow-Methods','PUT','POST','PATCH','DELETE','GET');
+     return res.status(200).json({});
+ }
+ next();
+});
 
 // Router which should handle router
 app.use('/user',userRoutes);

@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
+
+const db = require('../../config/database');
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const User = require('../models/user');
+const User = require('../../models/user');
 
 router.post('/signup',(req, res, next)=>{
 
@@ -27,14 +29,13 @@ router.post('/signup',(req, res, next)=>{
                        expiresIn:"1h"
                     }
                     );
-                    const user= new User({
-                        _id: new mongoose.Types.ObjectId(),
+                    User.create({
+                        firsName:req.body.firstName,
+                        lastName:req.body.lastName,
                         email:req.body.email,
                         password:hash,
-                        token:token
-                   });
-                   user
-                   .save()
+                        auth_token:token
+                   })
                    .then(result =>{
                        res.status(201).json({message:'User Created',data:result})
                    })
@@ -52,10 +53,9 @@ router.post('/signup',(req, res, next)=>{
 
 router.post('/login',(req,res, next)=>{
     User.find({email:req.body.email})
-    .exec()
     .then(user=>{
         if(user.length<1){
-            return res.status(401).json({message:"Fail to login"});
+            return res.status(401).json({message:"Fail to check login"});
         }
         bcrypt.compare(req.body.password, user[0].password, (err, result) =>{
          if(err){
@@ -64,22 +64,35 @@ router.post('/login',(req,res, next)=>{
          if(result){
              const token = jwt.sign({
                  email:user[0].email,
-                 userId:user[0]._id
+                 id:user[0].id
              },
              'secret',
              {
                 expiresIn:"1h"
              }
              );
-             return res.status(201).json({
-                 message:'Login Successfully',
-                 user:user[0],
-                 token: token
+             console.log(user[0]._id,'---------user id',token)
+
+             User.updateOne({ $set: {auth_token:token} })
+             .then(succes=>{
+                 if(succes){
+                    return res.status(201).json({
+                        message:'Login Successfully',
+                        user:succes,
+                        token: token
+                    })
+                 }else{
+                    res.status(500).json({
+                        message:'Login faild',
+                    })
+                 }
+                 
              })
+             .catch(err =>{error:err})
+            
          }
          res.status(500).json({
             message:'Login faild',
-            token: token
         })
         })
 
@@ -90,9 +103,8 @@ router.post('/login',(req,res, next)=>{
 })
 
 
-router.get('/',(req, res, next) =>{
+router.get('/',(req, res) =>{
     User.find()
-    .exec()
     .then(doc =>{
       console.log('------>dec---->',doc);
       res.status(200).json({

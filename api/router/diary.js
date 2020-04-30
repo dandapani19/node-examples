@@ -1,12 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const mongoose = require('mongoose');
+const db = require('../../config/database');
 const checkAuth =require('../middleware/check-auth');
-const Diary = require('../models/diary');
+const Diary = require('../../models/diary');
 
 router.get('/',checkAuth,(req, res, next) =>{
   Diary.find()
-  .exec()
   .then(doc =>{
     console.log('------>dec---->',doc);
     res.status(200).json({
@@ -18,13 +17,10 @@ router.get('/',checkAuth,(req, res, next) =>{
 });
 
 router.post('/',checkAuth,(req, res,next) =>{
-  const diary = new Diary({
-    _id: new mongoose.Types.ObjectId(),
-    diary:req.body.userId,
-    notes:req.body.notes
-  });
-  diary
-  .save()
+  Diary.create({
+    Diary:req.body.diary,
+    Notes:req.body.notes
+  })
   .then(data =>{
          console.log('---------->data------>',data);        
          res.status(200).json({
